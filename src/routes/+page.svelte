@@ -8,10 +8,9 @@
 		{ nombre: 'María', aporte: 3000 },
 		{ nombre: 'José', aporte: 4000 }
 	];
-	let a;
 	let aniadir = () => {
 		//Check that the name is not empty, not repeatedm and the amount is a number
-		if (nombreNuevo === undefined) return;
+		if (nombreNuevo === undefined || '') return;
 		if (personas.find((p) => p.nombre === nombreNuevo)) return;
 		if (aporteNuevo == undefined) aporteNuevo = 0;
 		personas = [...personas, { nombre: nombreNuevo, aporte: aporteNuevo }];
@@ -21,6 +20,10 @@
 	let remover = (persona) => {
 		personas = personas.filter((p) => p.nombre !== persona.nombre);
 	};
+	$: personas.forEach((persona) => {
+		persona.debt =
+			(personas.reduce((a, b) => a + b.aporte, 0) / personas.length).toFixed(0) - persona.aporte;
+	});
 </script>
 
 <div class="flex flex-col h-screen">
@@ -46,10 +49,8 @@
 					</td>
 					<td>{persona.aporte}</td>
 					<td>
-						<div class={`badge ${a < 0 ? 'badge-success' : 'badge-error'}`}>
-							{(a =
-								(personas.reduce((a, b) => a + b.aporte, 0) / personas.length).toFixed(0) -
-								persona.aporte)}
+						<div class={`badge ${persona.debt > 0 ? 'badge-error' : 'badge-success'}`}>
+							{Math.abs(persona.debt)}
 						</div>
 					</td>
 					<td>
